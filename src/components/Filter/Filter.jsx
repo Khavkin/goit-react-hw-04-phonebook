@@ -1,23 +1,21 @@
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class Filter extends Component {
-  static propTypes = {
-    filter: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-  };
-  handleOnChange = ({ currentTarget }) => {
+const Filter = ({ filter, onChange }) => {
+  const handleOnChange = ({ currentTarget }) => {
     const value = currentTarget.value;
-    this.props.onChange(value);
+    onChange(value);
   };
-  render() {
-    return (
-      <>
-        <h3>Find contacts by name</h3>
-        <input value={this.props.filter} onChange={this.handleOnChange}></input>
-      </>
-    );
-  }
-}
 
+  return (
+    <>
+      <h3>Find contacts by name</h3>
+      <input value={filter} onChange={handleOnChange}></input>
+    </>
+  );
+};
+
+Filter.propTypes = {
+  filter: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 export default Filter;

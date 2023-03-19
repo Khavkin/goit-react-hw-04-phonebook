@@ -1,99 +1,82 @@
 import ContactForm from 'components/ContactForm';
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { MainContainer } from './App.styled';
 import { nanoid } from 'nanoid';
 import Filter from 'components/Filter';
 import ContactList from 'components/ContactList';
 
-// const test = {
-//   contacts: [
-//     { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-//     { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-//     { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-//     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-//   ],
-//   filter: '',
-// };
 const APP_STORAGE = 'phonebook';
 
-class App extends Component {
-  defaultState = {
-    contacts: [],
-    filter: '',
-  };
+const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  state = { ...this.defaultState };
+  useEffect(() => {
+    console.log('Mouting phase: same when componentDidMount runs');
+    const fromLocalStorage = localStorage.getItem(APP_STORAGE) || [];
+    const contactsLS = JSON.parse(fromLocalStorage);
+    console.dir(contactsLS);
+    setContacts(contactsLS);
 
-  componentDidMount() {
-    const fromLocalStorage = localStorage.getItem(APP_STORAGE);
-    const contacts = JSON.parse(fromLocalStorage);
-    if (contacts) this.setState({ contacts: [...contacts] });
-  }
-  componentDidUpdate(_, prevState) {
-    const { contacts } = this.state;
-    const prevContacts = prevState.contacts;
-    if (contacts.length !== prevContacts.lenght) {
-      localStorage.setItem(APP_STORAGE, JSON.stringify(contacts));
-    }
-  }
+    console.log('Mouting phase: same when componentDidMount ends');
+  }, []);
 
-  handleOnSubitContactForm = contact => {
-    if (!this.findContact(contact.name)) {
-      this.addContact(contact);
+  useEffect(() => {
+    console.log('Update phase: same when componentDidUpdate runs');
+    console.dir(contacts);
+    localStorage.setItem(APP_STORAGE, JSON.stringify(contacts));
+
+    console.log('Update phase: same when componentDidUpdate end');
+  }, [contacts]);
+
+  const handleOnSubitContactForm = contact => {
+    if (!findContact(contact.name)) {
+      addContact(contact);
       return true;
     } else return false;
   };
 
-  addContact = contact => {
+  const addContact = contact => {
     const toAdd = { ...contact, id: nanoid() };
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, toAdd],
-    }));
+    setContacts(prevContacts => [...prevContacts, toAdd]);
   };
 
-  findContact = name => {
-    const { contacts } = this.state;
+  const findContact = name => {
     const toFind = name.toLowerCase();
     if (contacts.find(({ name }) => name.toLowerCase() === toFind)) return true;
     else return false;
   };
 
-  handleOnFilterChange = filter => {
-    this.setState({ filter });
+  const handleOnFilterChange = filter => {
+    setFilter(filter);
   };
 
-  showContacts = () => {
-    const { contacts } = this.state;
-    const filter = this.state.filter.toLocaleLowerCase();
+  const showContacts = () => {
+    const filterLC = filter.toLocaleLowerCase();
 
-    return contacts.filter(({ name }) => name.toLowerCase().includes(filter));
+    return contacts.filter(({ name }) => name.toLowerCase().includes(filterLC));
   };
 
-  handleOnDeleteContact = contactID => {
+  const handleOnDeleteContact = contactID => {
     this.setState(({ contacts }) => ({
       contacts: contacts.filter(({ id }) => id !== contactID),
     }));
   };
 
-  render() {
-    return (
-      <MainContainer>
-        <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.handleOnSubitContactForm} />
-        <h2>Contacts</h2>
-        <Filter
-          filter={this.state.filter}
-          onChange={this.handleOnFilterChange}
+  return (
+    <MainContainer>
+      <h1>Phonebook</h1>
+      <ContactForm onSubmit={handleOnSubitContactForm} />
+      <h2>Contacts</h2>
+      <Filter filter={filter} onChange={handleOnFilterChange} />
+      {contacts.length !== 0 && (
+        <ContactList
+          contacts={showContacts()}
+          onDelete={handleOnDeleteContact}
         />
-        {this.state.contacts.length !== 0 && (
-          <ContactList
-            contacts={this.showContacts()}
-            onDelete={this.handleOnDeleteContact}
-          />
-        )}
-      </MainContainer>
-    );
-  }
-}
+      )}
+    </MainContainer>
+  );
+};
 
 export default App;

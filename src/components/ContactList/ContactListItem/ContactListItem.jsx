@@ -1,29 +1,26 @@
-import { Component } from 'react';
 import { ListItem } from './ContactListItem.styled';
 import PropTypes from 'prop-types';
 
-class ContactListItem extends Component {
-  static propTypes = {
-    contact: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }),
+const ContactListItem = ({ contact, onDelete }) => {
+  const { name, number } = contact;
+  return (
+    <ListItem>
+      <span>{name}:</span>
+      <span>{number}</span>
+      <button type="button" onClick={onDelete}>
+        Delete
+      </button>
+    </ListItem>
+  );
+};
 
-    onDelete: PropTypes.func.isRequired,
-  };
+ContactListItem.propTypes = {
+  contact: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
+  }),
 
-  render() {
-    const { name, number } = this.props.contact;
-    return (
-      <ListItem>
-        <span>{name}:</span>
-        <span>{number}</span>
-        <button type="button" onClick={this.props.onDelete}>
-          Delete
-        </button>
-      </ListItem>
-    );
-  }
-}
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default ContactListItem;
