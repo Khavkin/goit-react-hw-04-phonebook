@@ -50,9 +50,9 @@ const App = () => {
   };
 
   const handleOnDeleteContact = contactID => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(({ id }) => id !== contactID),
-    }));
+    setContacts(oldContacts =>
+      oldContacts.filter(({ id }) => id !== contactID)
+    );
   };
 
   return (
