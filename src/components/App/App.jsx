@@ -12,21 +12,13 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    console.log('Mouting phase: same when componentDidMount runs');
     const fromLocalStorage = localStorage.getItem(APP_STORAGE) || [];
     const contactsLS = JSON.parse(fromLocalStorage);
-    console.dir(contactsLS);
     setContacts(contactsLS);
-
-    console.log('Mouting phase: same when componentDidMount ends');
   }, []);
 
   useEffect(() => {
-    console.log('Update phase: same when componentDidUpdate runs');
-    console.dir(contacts);
     localStorage.setItem(APP_STORAGE, JSON.stringify(contacts));
-
-    console.log('Update phase: same when componentDidUpdate end');
   }, [contacts]);
 
   const handleOnSubitContactForm = contact => {
