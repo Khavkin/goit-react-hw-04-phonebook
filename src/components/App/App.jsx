@@ -1,25 +1,16 @@
 import ContactForm from 'components/ContactForm';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MainContainer } from './App.styled';
 import { nanoid } from 'nanoid';
 import Filter from 'components/Filter';
 import ContactList from 'components/ContactList';
+import { useLocalStorage } from 'components/Hooks/useLocalStorage';
 
 const APP_STORAGE = 'phonebook';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useLocalStorage(APP_STORAGE, []);
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const fromLocalStorage = localStorage.getItem(APP_STORAGE) || [];
-    const contactsLS = JSON.parse(fromLocalStorage);
-    setContacts(contactsLS);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(APP_STORAGE, JSON.stringify(contacts));
-  }, [contacts]);
 
   const handleOnSubitContactForm = contact => {
     if (!findContact(contact.name)) {
